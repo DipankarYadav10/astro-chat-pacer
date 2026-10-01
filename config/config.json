@@ -1,0 +1,36 @@
+{
+  "env": "development",
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8081,
+    "shutdownDrainMs": 15000
+  },
+  "kafka": {
+    "enabled": true,
+    "brokers": [
+      "kafka.stashastro.int:9092"
+    ],
+    "clientId": "astro-chat-pacer",
+    "groupId": "astro-chat-pacer-consumer",
+    "inputTopic": "astro_chat_out",
+    "outputTopic": "astro_chat_paced"
+  },
+  "pacing": {
+    "typingSpeedCps": 4,
+    "initialDelayMs": 800,
+    "minDelayMs": 450,
+    "maxDelayMs": 4000,
+    "totalMaxMs": 15000,
+    "pillsDelayMs": 0,
+    "api": {
+      "enabled": false,
+      "baseUrl": "",
+      "timeoutMs": 3000,
+      "cacheTtlMs": 300000
+    }
+  },
+  "logging": {
+    "level": "info",
+    "pretty": false
+  }
+}

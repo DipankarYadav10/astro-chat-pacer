@@ -1,0 +1,14 @@
+{
+  "env": "local",
+  "kafka": {
+    "enabled": true,
+    "brokers": [
+      "kafka:9092"
+    ],
+    "groupId": "astro-chat-pacer-local"
+  },
+  "logging": {
+    "level": "debug",
+    "pretty": true
+  }
+}

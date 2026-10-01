@@ -1,0 +1,14 @@
+{
+  "env": "production",
+  "kafka": {
+    "enabled": true,
+    "brokers": [
+      "kafka.stashastro.int:9092"
+    ],
+    "groupId": "astro-chat-pacer"
+  },
+  "logging": {
+    "level": "info",
+    "pretty": false
+  }
+}

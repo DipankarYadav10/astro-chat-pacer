@@ -1,0 +1,38 @@
+# astro-chat-pacer — CONSUMER role.
+#
+# Reads `astro_chat_out`, paces each turn, publishes every block to
+# `astro_chat_paced`. This is the production path; scale it by partition count.
+# Serves /health on 8081 so an orchestrator has something to probe.
+
+# --- build stage: compile TypeScript to dist/ ---
+FROM node:20-alpine AS build
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY tsconfig.json ./
+COPY src ./src
+RUN npm run build
+
+# --- runtime stage: production deps + compiled output only ---
+FROM node:20-alpine AS runtime
+WORKDIR /app
+ENV NODE_ENV=production
+ENV ROLE=consumer
+
+RUN apk add --no-cache curl
+
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+
+COPY --from=build /app/dist ./dist
+# Runtime config: DynamicConfig reads config/config.json + config/<NODE_ENV>/config.json
+# from the working directory at boot.
+COPY config ./config
+
+EXPOSE 8081
+# A pod draining mid-playback needs longer than the default 10s to finish
+# publishing a turn's remaining blocks (see server.shutdownDrainMs).
+STOPSIGNAL SIGTERM
+CMD ["npm", "run", "start:consumer"]

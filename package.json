@@ -1,0 +1,28 @@
+{
+  "name": "astro-chat-pacer",
+  "version": "1.0.0",
+  "description": "Consumes whole brains replies off astro_chat_out and republishes them to astro_chat_paced one block at a time, paced by the astrologer's typing speed",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "start:consumer": "ROLE=consumer node dist/index.js",
+    "start:service": "ROLE=service node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "dev:consumer": "ROLE=consumer ts-node src/index.ts",
+    "dev:service": "ROLE=service ts-node src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "ts-node test/pacing.test.ts",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "kafkajs": "^2.2.4",
+    "winston": "^3.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "prettier": "^3.7.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.0"
+  }
+}

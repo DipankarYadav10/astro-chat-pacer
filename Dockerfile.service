@@ -1,0 +1,37 @@
+# astro-chat-pacer — SERVICE role.
+#
+# HTTP API + producer. It does NOT join the consumer group, so it never takes a
+# partition from the consumer pods. Used to pace and publish a turn handed in
+# over HTTP (replay, inspection), and to serve /health.
+#
+#   GET  /health
+#   POST /turns/pace    body: an astro_chat_out turn (+ optional "dry_run": true)
+
+# --- build stage: compile TypeScript to dist/ ---
+FROM node:20-alpine AS build
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY tsconfig.json ./
+COPY src ./src
+RUN npm run build
+
+# --- runtime stage: production deps + compiled output only ---
+FROM node:20-alpine AS runtime
+WORKDIR /app
+ENV NODE_ENV=production
+ENV ROLE=service
+
+RUN apk add --no-cache curl
+
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+
+COPY --from=build /app/dist ./dist
+COPY config ./config
+
+EXPOSE 8081
+STOPSIGNAL SIGTERM
+CMD ["npm", "run", "start:service"]

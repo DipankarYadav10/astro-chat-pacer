@@ -1,0 +1,14 @@
+{
+  "env": "staging",
+  "kafka": {
+    "enabled": true,
+    "brokers": [
+      "kafka.stashastro.int:9092"
+    ],
+    "groupId": "astro-chat-pacer-staging"
+  },
+  "logging": {
+    "level": "debug",
+    "pretty": false
+  }
+}
